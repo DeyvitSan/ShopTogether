@@ -25,3 +25,19 @@ data class AuthResponseDto(
 
     @SerializedName("user") val user: UserDto
 )
+
+data class UserDto(
+
+    @SerializedName("id")    val id: String,
+
+    @SerializedName("name")  val name: String,
+
+    @SerializedName("email") val email: String
+)
+
+data class UpdateUserRequestDto(
+
+    @SerializedName ("name")  val name: String,
+
+    @SerializedName("email") val email: String
+)
