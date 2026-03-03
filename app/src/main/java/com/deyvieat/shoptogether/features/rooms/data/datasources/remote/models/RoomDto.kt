@@ -8,12 +8,18 @@ data class RoomDto(
     @SerializedName("id")          val id: String,
     @SerializedName("name")        val name: String,
     @SerializedName("description") val description: String,
-    @SerializedName("created_by")  val createdBy: String,
-    @SerializedName("is_active")   val isActive: Boolean,
-    @SerializedName("created_at")  val createdAt: String
+    @SerializedName("createdBy")   val createdBy: String,
+    @SerializedName("isActive")    val isActive: Boolean,
+    @SerializedName("createdAt")   val createdAt: String
 )
 
 data class CreateRoomRequestDto(
     @SerializedName("name")        val name: String,
-    @SerializedName("description") val description: String
+    @SerializedName("description") val description: String,
+    @SerializedName("createdBy")   val createdBy: String
+)
+
+
+data class JoinLeaveRequest(
+    @SerializedName("userId") val userId: String
 )
