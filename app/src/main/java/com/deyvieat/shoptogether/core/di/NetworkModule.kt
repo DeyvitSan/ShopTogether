@@ -1,13 +1,9 @@
 package com.deyvieat.shoptogether.core.di
 
-import com.deyvieat.shoptogether.core.session.SessionManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -19,8 +15,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    const val BASE_URL    = "http://10.0.2.2:8080/"
-    const val WS_BASE_URL = "ws://10.0.2.2:8080/ws/rooms/"
+    const val BASE_URL = "https://zuri.space/api/"
+    const val WS_BASE_URL = "wss://zuri.space"
 
     // ─────────────────────────────────────────────
     // Logging
@@ -33,41 +29,15 @@ object NetworkModule {
         }
 
     // ─────────────────────────────────────────────
-    // Interceptor con Token
-    // ─────────────────────────────────────────────
-    @Provides
-    @Singleton
-    fun provideAuthInterceptor(
-        sessionManager: SessionManager
-    ): Interceptor {
-        return Interceptor { chain ->
-
-            val token = runBlocking {
-                sessionManager.token.first()
-            }
-
-            val newRequest = chain.request().newBuilder().apply {
-                if (!token.isNullOrEmpty()) {
-                    addHeader("Authorization", "Bearer $token")
-                }
-            }.build()
-
-            chain.proceed(newRequest)
-        }
-    }
-
-    // ─────────────────────────────────────────────
     // OkHttp REST
     // ─────────────────────────────────────────────
     @Provides
     @Singleton
     @AuthOkHttp
     fun provideAuthOkHttp(
-        logging: HttpLoggingInterceptor,
-        authInterceptor: Interceptor
+        logging: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(authInterceptor)
             .addInterceptor(logging)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
@@ -81,11 +51,9 @@ object NetworkModule {
     @Singleton
     @WsOkHttp
     fun provideWsOkHttp(
-        logging: HttpLoggingInterceptor,
-        authInterceptor: Interceptor
+        logging: HttpLoggingInterceptor
     ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(authInterceptor)
             .addInterceptor(logging)
             .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(0, TimeUnit.SECONDS)

@@ -9,8 +9,9 @@ interface RoomDao {
     @Query("SELECT * FROM rooms WHERE isActive = 1 ORDER BY createdAt DESC")
     fun observeActiveRooms(): Flow<List<RoomEntity>>
 
-    @Upsert suspend fun upsertAll(rooms: List<RoomEntity>)
+    @Upsert 
+    suspend fun upsertAll(rooms: List<RoomEntity>)
 
-    @Query("UPDATE rooms SET isActive = 0 WHERE id = :roomId")
-    suspend fun closeRoom(roomId: String)
+    @Query("DELETE FROM rooms WHERE id = :roomId")
+    suspend fun deleteRoom(roomId: String) // Cambiado de update a delete
 }

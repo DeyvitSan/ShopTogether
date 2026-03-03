@@ -2,29 +2,33 @@ package com.deyvieat.shoptogether.core.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.deyvieat.shoptogether.features.rooms.data.local.dao.RoomDao
-import com.deyvieat.shoptogether.features.rooms.data.local.entities.RoomEntity
-import com.deyvieat.shoptogether.features.products.data.local.dao.ProductDao
-import com.deyvieat.shoptogether.features.products.data.local.entities.ProductEntity
-import com.deyvieat.shoptogether.features.votes.data.local.dao.VoteDao
-import com.deyvieat.shoptogether.features.votes.data.local.entities.VoteEntity
-import com.deyvieat.shoptogether.features.cart.data.local.dao.CartDao
-import com.deyvieat.shoptogether.features.cart.data.local.entities.CartEntity
+
+import com.deyvieat.shoptogether.features.rooms.data.datasources.local.dao.RoomDao
+import com.deyvieat.shoptogether.features.rooms.data.datasources.local.entities.RoomEntity
+
+import com.deyvieat.shoptogether.features.products.data.datasources.local.dao.ProductDao
+import com.deyvieat.shoptogether.features.products.data.datasources.local.entities.ProductEntity
+
+import com.deyvieat.shoptogether.features.cart.data.datasources.local.dao.CartDao
+import com.deyvieat.shoptogether.features.cart.data.datasources.local.entities.CartEntity
+
+import com.deyvieat.shoptogether.features.votes.data.datasources.local.dao.VoteDao
+import com.deyvieat.shoptogether.features.votes.data.datasources.local.entities.VoteEntity
 
 @Database(
     entities = [
         RoomEntity::class,
         ProductEntity::class,
-        VoteEntity::class,
-        CartEntity::class
+        CartEntity::class,
+        VoteEntity::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun roomDao(): RoomDao
     abstract fun productDao(): ProductDao
-    abstract fun voteDao(): VoteDao
     abstract fun cartDao(): CartDao
+    abstract fun voteDao(): VoteDao
 }

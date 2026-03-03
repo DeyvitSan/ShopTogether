@@ -4,5 +4,8 @@ import com.deyvieat.shoptogether.features.products.data.datasources.local.entiti
 import com.deyvieat.shoptogether.features.products.data.datasources.remote.models.ProductDto
 import com.deyvieat.shoptogether.features.products.domain.entities.Product
 
-fun ProductDto.toEntity() = ProductEntity(id, name, price, stock, roomId, imageUrl, createdAt)
-fun ProductEntity.toDomain() = Product(id, name, price, stock, roomId, imageUrl, createdAt)
+fun ProductDto.toEntity() =
+    ProductEntity(id, name, price, stock, roomId, imageUrl, createdAt)
+
+fun ProductEntity.toDomain() =
+    Product(id, name, price, stock, roomId, imageUrl, createdAt)

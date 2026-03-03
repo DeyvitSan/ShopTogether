@@ -1,7 +1,5 @@
 package com.deyvieat.shoptogether.core.navigation
 
-
-
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
@@ -38,9 +36,8 @@ fun AppNavigation() {
         composable(AppRoutes.Register.route) {
             RegisterScreen(
                 onSuccess = {
-                    navController.navigate(AppRoutes.RoomList.route) {
-                        popUpTo(AppRoutes.Login.route) { inclusive = true }
-                    }
+                    // Al registrarse con éxito, volvemos al Login
+                    navController.popBackStack()
                 },
                 onBack = { navController.popBackStack() }
             )

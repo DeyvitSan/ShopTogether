@@ -1,9 +1,7 @@
 package com.deyvieat.shoptogether.core.database
 
-
 import android.content.Context
 import androidx.room.Room
-import com.deyvieat.shoptogether.core.database.AppDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,7 +22,9 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "shoptogether_db"
-        ).build()
+        )
+        .fallbackToDestructiveMigration() // ESTA LÍNEA EVITA QUE LA APP SE CIERRE POR CAMBIOS EN DB
+        .build()
     }
 
     @Provides
@@ -34,8 +34,8 @@ object DatabaseModule {
     fun provideProductDao(db: AppDatabase) = db.productDao()
 
     @Provides
-    fun provideVoteDao(db: AppDatabase) = db.voteDao()
+    fun provideCartDao(db: AppDatabase) = db.cartDao()
 
     @Provides
-    fun provideCartDao(db: AppDatabase) = db.cartDao()
+    fun provideVoteDao(db: AppDatabase) = db.voteDao()
 }

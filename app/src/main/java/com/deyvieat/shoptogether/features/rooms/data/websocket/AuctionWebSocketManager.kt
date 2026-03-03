@@ -1,58 +1,59 @@
 package com.deyvieat.shoptogether.features.rooms.data.websocket
 
-import com.deyvieat.shoptogether.core.di.NetworkModule
-import com.deyvieat.shoptogether.core.di.WsOkHttp
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.WebSocket
-import okhttp3.WebSocketListener
+import android.util.Log
+import io.socket.client.IO
+import io.socket.client.Socket
+import org.json.JSONObject
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AuctionWebSocketManager @Inject constructor(
-    @WsOkHttp private val client: OkHttpClient
-) {
+class AuctionSocketManager @Inject constructor() {
 
-    private var webSocket: WebSocket? = null
+    private var socket: Socket? = null
 
     fun connect(
         roomId: String,
-        onMessage: (String) -> Unit,
-        onClosed: () -> Unit = {},
-        onFailure: (Throwable) -> Unit = {}
+        userId: String,
+        onMessage: (type: String, data: String) -> Unit
     ) {
+        try {
+            val options = IO.Options()
+            options.query = "roomId=$roomId&userId=$userId"
 
-        val request = Request.Builder()
-            .url("${NetworkModule.WS_BASE_URL}$roomId")
-            .build()
+            // 🔥 IMPORTANTE → Puerto 4000
+            socket = IO.socket("http://zuri.space:4000", options)
 
-        webSocket = client.newWebSocket(request, object : WebSocketListener() {
-
-            override fun onMessage(webSocket: WebSocket, text: String) {
-                onMessage(text)
+            socket?.on(Socket.EVENT_CONNECT) {
+                Log.d("SOCKET", "✅ Conectado al WebSocket 4000")
             }
 
-            override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-                onClosed()
+            socket?.on("new_vote") { args ->
+                val data = args[0].toString()
+                Log.d("SOCKET", "📩 new_vote recibido: $data")
+                onMessage("new_vote", data)
             }
 
-            override fun onFailure(
-                webSocket: WebSocket,
-                t: Throwable,
-                response: okhttp3.Response?
-            ) {
-                onFailure(t)
-            }
-        })
+            socket?.connect()
+
+        } catch (e: Exception) {
+            Log.e("SOCKET", "Error conexión: ${e.message}")
+        }
     }
 
-    fun sendBid(amount: Double) {
-        webSocket?.send(amount.toString())
+    fun sendVote(roomId: String, productId: String, userId: String, value: Double) {
+        val json = JSONObject().apply {
+            put("roomId", roomId)
+            put("productId", productId)
+            put("userId", userId)
+            put("value", value)
+        }
+
+        socket?.emit("place_vote", json)
     }
 
     fun disconnect() {
-        webSocket?.close(1000, "User left room")
-        webSocket = null
+        socket?.disconnect()
+        socket?.off()
     }
 }

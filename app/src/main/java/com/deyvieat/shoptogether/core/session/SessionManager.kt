@@ -1,6 +1,5 @@
 package com.deyvieat.shoptogether.core.session
 
-
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import kotlinx.coroutines.flow.Flow
@@ -22,9 +21,12 @@ class SessionManager @Inject constructor(
     val token: Flow<String?> =
         dataStore.data.map { it[KEY_TOKEN] }
 
-    suspend fun saveSession(token: String, userId: String, name: String) {
+    val userId: Flow<String?> =
+        dataStore.data.map { it[KEY_USER_ID] }
+
+    suspend fun saveSession(token: String?, userId: String, name: String) {
         dataStore.edit {
-            it[KEY_TOKEN]   = token
+            it[KEY_TOKEN]   = token ?: ""
             it[KEY_USER_ID] = userId
             it[KEY_NAME]    = name
         }
